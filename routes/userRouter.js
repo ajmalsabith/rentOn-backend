@@ -8,6 +8,9 @@ const userRoute= express()
 // post
 userRoute.post('/register',userController.userRegisterpost)
 userRoute.post('/purpose',userController.userPurpose)
+userRoute.post('/otp',userController.postotp)
+userRoute.post('/login',userController.loginuser)
+userRoute.post('/setpassword',userController.setpassword)
 
 
 // get
