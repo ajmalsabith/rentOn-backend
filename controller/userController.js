@@ -3,6 +3,8 @@ const User = require('../Models/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer')
+const vehicle= require('../Models/vehicleModel')
+
 const securePassword = async (password) => {
 
     try {
@@ -30,7 +32,6 @@ const userRegisterpost = async (req, res) => {
         }else{
             console.log('erere');
             const name = req.body.user.name
-            const dob = req.body.user.dob.toString(10)
             const email = req.body.user.emailuser
             const phone = req.body.user.phone
             const password = req.body.user.password
@@ -48,7 +49,6 @@ const userRegisterpost = async (req, res) => {
                 console.log('ajmal');
                 const user = new User({
                     name: name,
-                    dateOfBirth: dob,
                     email: email,
                     phone: phone,
                     password: hashedPassword
@@ -286,6 +286,29 @@ const setpassword =async (req,res)=>{
     }
 }
 
+const getprofile=async (req,res)=>{
+    try {
+
+        const cookie= req.cookies['jwt']
+        const claims= jwt.verify(cookie,'superscret')
+        const userdata= await User.findOne({_id:claims._id})
+        const vehicledata= await vehicle.findOne({ownerId:claims._id})
+
+        if (userdata && vehicledata) {
+            res.send({
+                userdata,vehicledata
+            })
+        }else{
+            res.status(400).send({
+                message:'somthing wrong..!'
+            })
+        }
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 
@@ -295,6 +318,7 @@ module.exports = {
     userget,
     postotp,
     loginuser,
-    setpassword
+    setpassword,
+    getprofile
 
 }

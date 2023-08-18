@@ -6,10 +6,6 @@ const userSCheema= new mongoose.Schema({
         type:String,
         required:true
     },
-    dateOfBirth:{
-        type:Date,
-        required:true
-    },
     email:{
         type:String,
         required:true
@@ -25,6 +21,10 @@ const userSCheema= new mongoose.Schema({
     purpose:{
         type:String,
         default:'customer'
+    },
+    connections:{
+        type:Number,
+        default:0
     },
     is_verified:{
         type:Boolean,

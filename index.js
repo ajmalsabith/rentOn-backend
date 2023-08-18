@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use('/api',userroutes);
 
-app.use('/file', express.static('file'));
+app.use('/public', express.static('./public/vehicleimg'));
 
 mongoose.connect('mongodb://127.0.0.1:27017/rentOn-project',{
     useNewUrlParser: true
