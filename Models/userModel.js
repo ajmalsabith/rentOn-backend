@@ -22,11 +22,19 @@ const userSCheema= new mongoose.Schema({
         type:String,
         default:'customer'
     },
+    image:{
+        type:String,
+        default:''
+    },
     connections:{
         type:Number,
         default:0
     },
     is_verified:{
+        type:Boolean,
+        default:false
+    },
+    is_admin:{
         type:Boolean,
         default:false
     }

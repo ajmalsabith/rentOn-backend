@@ -13,11 +13,6 @@ const vehicleSchema= new mongoose.Schema({
         required:true
     },
     vehicles:[{
-
-        vehicleId:{
-            type:String,
-            required:true
-        },
         name:{
             type:String,
             required:true

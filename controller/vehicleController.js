@@ -55,7 +55,6 @@ const addVehicle= async(req,res)=>{
                     ownerId:claims._id,
                     ownername:userdata.name,
                     vehicles:[{
-                        vehicleId:uniqueId,
                         name:name,
                         rentAmount:rentAmount,
                         type:type,

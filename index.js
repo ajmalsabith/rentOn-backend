@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const userroutes = require('./routes/userRouter');
+const adminRoutes = require('./routes/adminRouter');
 
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -14,6 +15,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use('/api',userroutes);
+app.use('/api/admin',adminRoutes);
 
 app.use('/public', express.static('./public/vehicleimg'));
 

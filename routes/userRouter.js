@@ -31,6 +31,10 @@ userRoute.post('/purpose',userController.userPurpose)
 userRoute.post('/otp',userController.postotp)
 userRoute.post('/login',userController.loginuser)
 userRoute.post('/setpassword',userController.setpassword)
+userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
+userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
+userRoute.post('/logout',userController.userLogOut)
+
 
 //vehicle
 userRoute.post('/vehicleAdd',upload.fields([{name:'image'},{name:'proof'}]),vehicleController.addVehicle)
@@ -41,6 +45,8 @@ userRoute.post('/vehicleAdd',upload.fields([{name:'image'},{name:'proof'}]),vehi
 /// get
 userRoute.get('/user',userController.userget)
 userRoute.get('/profile',userController.getprofile)
+userRoute.get('/editprofile',userController.editprofileload)
+userRoute.get('/home',userController.gethome)
 
 
 

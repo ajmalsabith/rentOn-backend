@@ -158,6 +158,7 @@ function sendmail(email) {
     });
    const otp= generateOTP()
    ogotp=otp
+   console.log(otp);
     const mailOptions = {
         from: process.env.user,
         to: email,
@@ -234,7 +235,7 @@ const loginuser= async (req,res)=>{
                 const passwordmatch = await bcrypt.compare(password, userdata.password)
                 if (passwordmatch) {
 
-                    const token = jwt.sign({_id:userdata._id},"superscret");
+                     const token = jwt.sign({_id:userdata._id},"superscret");
 
                     res.cookie("jwt",token,{
                         httpOnly:true,
@@ -291,10 +292,12 @@ const getprofile=async (req,res)=>{
 
         const cookie= req.cookies['jwt']
         const claims= jwt.verify(cookie,'superscret')
+        console.log(claims._id);
         const userdata= await User.findOne({_id:claims._id})
         const vehicledata= await vehicle.findOne({ownerId:claims._id})
+        console.log(userdata);
 
-        if (userdata && vehicledata) {
+        if (userdata) {
             res.send({
                 userdata,vehicledata
             })
@@ -309,8 +312,93 @@ const getprofile=async (req,res)=>{
     }
 }
 
+ const editprofileload = async (req,res)=>{
+    try {
+       const cookie= req.cookies['jwt']
+       const claims= jwt.verify(cookie,'superscret')
+       const userdata= await User.findOne({_id:claims._id,is_admin:false})
+       if (userdata) {
+        console.log(userdata);
+
+        res.send(userdata)
+       }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const editprofile = async (req,res)=>{
+    try {
+       const cookie= req.cookies['jwt']
+       const claims= jwt.verify(cookie,'superscret')
+       const imageFile = req.file.filename
+       console.log(imageFile);
+
+       const name=req.body.name
+       const phone=req.body.phone
+       const purpose=req.body.purpose
 
 
+
+       const userdata= await User.findOne({_id:claims._id})
+       if (userdata) {
+          const updatedata= await User.findOneAndUpdate({_id:claims._id},{$set:{name:name,purpose:purpose,phone:phone,image:req.file.filename}})
+          if (updatedata) {
+            res.send({
+                message:'profile updated success'
+            })
+          }else{
+            res.status(400).send({
+                message:'somthing wrong...!'
+            })
+          }
+       }else{
+        res.status(400).send({
+            message:'somthing wrong...!'
+        })
+       }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const gethome= async (req,res)=>{
+    try {
+       
+       const cookie= req.cookies['jwt']
+       const claims= jwt.verify(cookie,'superscret')
+       if (claims) {
+         const vehicledata= await vehicle.find()
+         if (vehicledata) {
+            res.send(vehicledata)
+         }else{
+            res.status(400).send({
+                message:'somthing wrong...!'
+            })
+         }
+
+       }else{
+        res.status(400).send({
+            message:'somthing wrong...!'
+        })
+       }
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const userLogOut=(req,res)=>{
+
+    res.cookie("jwt","",{maxAge:0})
+    res.send({
+        message:"user logout success"
+    })
+}
 
 module.exports = {
     userRegisterpost,
@@ -319,6 +407,10 @@ module.exports = {
     postotp,
     loginuser,
     setpassword,
-    getprofile
+    getprofile,
+    editprofileload,
+    editprofile,
+    userLogOut,
+    gethome
 
 }
