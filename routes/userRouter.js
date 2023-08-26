@@ -33,20 +33,24 @@ userRoute.post('/login',userController.loginuser)
 userRoute.post('/setpassword',userController.setpassword)
 userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
 userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
-userRoute.post('/logout',userController.userLogOut)
+
 
 
 //vehicle
 userRoute.post('/vehicleAdd',upload.fields([{name:'image'},{name:'proof'}]),vehicleController.addVehicle)
+userRoute.post('/editvehicle',vehicleController.editvehicleget)
+userRoute.post('/removevehi',vehicleController.removevehicle)
+userRoute.post('/editvehiclepost',upload.fields([{name:'image'},{name:'proof'}]),vehicleController.editvehicle)
 
 
 
 
 /// get
-userRoute.get('/user',userController.userget)
 userRoute.get('/profile',userController.getprofile)
 userRoute.get('/editprofile',userController.editprofileload)
 userRoute.get('/home',userController.gethome)
+userRoute.get('/getsevices',userController.serviceget)
+userRoute.get('/getbusiness',userController.businessget)
 
 
 

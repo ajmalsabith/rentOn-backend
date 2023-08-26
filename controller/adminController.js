@@ -54,7 +54,6 @@ const customerget = async (req, res) => {
             return res.status(401).send({ message: 'Access denied. No token provided.' })
         }
         
-
         const customerdata = await User.find({ is_admin: false, purpose: 'customer' })
         if (customerdata) {
             res.send({
@@ -128,6 +127,46 @@ const serviceget = async (req, res) => {
 
 
 
+const useractions=async(req,res)=>{
+    try {
+        const id = req.body.id
+        console.log(id);
+
+        const userdata= await User.findOne({_id:id})
+        if (!userdata.is_block) {
+            const updatedata= await User.findByIdAndUpdate({_id:id},{$set:{is_block:true}})
+            if (updatedata) {
+                res.send({
+                    success:'blocked'
+                })
+            }else{
+                res.status.send({
+                    message:'somthing wrong...!'
+                })
+            }
+        }else{
+            console.log('userduud');
+            const updatedata= await User.findByIdAndUpdate({_id:id},{$set:{is_block:false}})
+            if (updatedata) {
+                console.log(updatedata);
+
+                res.send({
+                    success:'unblocked'
+                })
+            }else{
+                res.status.send({
+                    message:'somthing wrong...!'
+                })
+            }
+           
+        }
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+
 
 
 
@@ -135,5 +174,6 @@ module.exports = {
     veryfilogin,
     customerget,
     businessget,
-    serviceget
+    serviceget,
+    useractions
 }

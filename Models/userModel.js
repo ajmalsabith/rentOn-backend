@@ -30,6 +30,10 @@ const userSCheema= new mongoose.Schema({
         type:Number,
         default:0
     },
+    post:{
+        type:Number,
+        default:0
+    },
     is_verified:{
         type:Boolean,
         default:false
@@ -37,7 +41,12 @@ const userSCheema= new mongoose.Schema({
     is_admin:{
         type:Boolean,
         default:false
-    }
+    },
+    is_block:{
+        type:Boolean,
+        default:false
+    },
+    
 
 })
 
