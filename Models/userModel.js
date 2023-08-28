@@ -46,6 +46,18 @@ const userSCheema= new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    aboutyou:{
+        type:String,
+        default:null
+    },
+    qualification:{
+        type:String,
+        default:null
+    },
+    place:{
+        type:String,
+        default:null
+    }
     
 
 })

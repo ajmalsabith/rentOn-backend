@@ -459,6 +459,28 @@ const businessget= async(req,res)=>{
     }
 }
 
+const viewprofile=async (req,res)=>{
+    try {
+
+        const id = req.body.id
+        const userdata = await User.findOne({ _id:id})
+        const vehicledata = await vehicle.find({ ownerId:id})
+
+        if (userdata) {
+            res.send({
+                userdata, vehicledata
+            })
+        } else {
+            res.status(400).send({
+                message: 'somthing wrong..!'
+            })
+        }
+
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
 
 
 
@@ -473,7 +495,8 @@ module.exports = {
     editprofile,
     gethome,
     serviceget,
-    businessget
+    businessget,
+    viewprofile
     
 
 }

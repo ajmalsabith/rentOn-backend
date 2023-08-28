@@ -209,6 +209,7 @@ const removevehicle=async(req,res)=>{
         console.log(id);
         const vehicledata= await vehicle.findOneAndDelete({_id:id})
         if (vehicledata) {
+            await User.updateOne({ _id:vehicledata.ownerId }, { $inc: { post: -1 } });
             res.send({
                 message:'your vehicle deleted'
             })

@@ -51,6 +51,7 @@ userRoute.get('/editprofile',userController.editprofileload)
 userRoute.get('/home',userController.gethome)
 userRoute.get('/getsevices',userController.serviceget)
 userRoute.get('/getbusiness',userController.businessget)
+userRoute.post('/viewprofile',userController.viewprofile)
 
 
 

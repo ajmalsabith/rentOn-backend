@@ -56,7 +56,8 @@ const vehicleSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: new Date().toString(10)
-    }
+    },
+    
 
 
 
