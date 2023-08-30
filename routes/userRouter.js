@@ -33,6 +33,8 @@ userRoute.post('/login',userController.loginuser)
 userRoute.post('/setpassword',userController.setpassword)
 userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
 userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
+userRoute.post('/subscription',userController.subscriptiontaken)
+
 
 
 

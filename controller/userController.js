@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer')
 const vehicle = require('../Models/vehicleModel')
+const subscription = require('../Models/subscriptionModel')
 
 const securePassword = async (password) => {
 
@@ -297,12 +298,13 @@ const getprofile = async (req, res) => {
         const claims = jwt.verify(token, 'usersecret')
         console.log(claims._id+'userID accessed');
         const userdata = await User.findOne({ _id: claims._id })
+        const subdata = await subscription.findOne({userId: claims._id })
         const vehicledata = await vehicle.find({ ownerId: claims._id })
         console.log(vehicledata);
 
         if (userdata) {
             res.send({
-                userdata, vehicledata
+                userdata, vehicledata,subdata
             })
         } else {
             res.status(400).send({
@@ -482,6 +484,52 @@ const viewprofile=async (req,res)=>{
     }
 }
 
+const subscriptiontaken =async (req,res)=>{
+    try {
+        
+        const token = req.header('Authorization')?.split(' ')[1];
+        const paymentdata= req.body.data
+        console.log(paymentdata);
+
+        const type = paymentdata.type === 'monthly' ? 30 : 365;
+
+        const endDate = new Date(Date.now() + type * 24 * 60 * 60 * 1000)
+        
+        const claims= jwt.verify(token,'usersecret')
+        const userdata= await User.findOne({_id:claims._id})
+        if (userdata) {
+            const subdata= new subscription({
+                userId:claims._id,
+                userName:userdata.name,
+                purpose:userdata.purpose,
+                paymentId:paymentdata.paymentId,
+                subscriptionType:paymentdata.type,
+                amount:paymentdata.amount,
+                endDate:endDate
+            })
+
+            const resulte= await subdata.save()
+            console.log(resulte);
+            if (resulte) {
+                res.send({
+                    message:`your ${paymentdata.type} subscription success`
+                })
+            }else{
+                res.status(400).send({
+                    message:'somthing went wrong...!'
+                })
+            }
+        }else{
+            res.status(400).send({
+                message:'somthing went wrong...!'
+            })
+        }
+    } catch (error) {
+
+        console.log(error.message);
+    }
+}
+
 
 
 module.exports = {
@@ -496,7 +544,8 @@ module.exports = {
     gethome,
     serviceget,
     businessget,
-    viewprofile
+    viewprofile,
+    subscriptiontaken
     
 
 }
