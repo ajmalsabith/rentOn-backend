@@ -35,7 +35,10 @@ const subscriptionschema= new mongoose.Schema({
     },
     endDate:{
         type:String,
-        required:true
+        
+    },
+    vehicleId:{
+        type:String
     }
 })
 

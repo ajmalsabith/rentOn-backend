@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../Models/userModel')
 const vehicle = require('../Models/vehicleModel')
 const uuid = require('uuid');
+const subscription = require('../Models/subscriptionModel')
 
 
 
@@ -224,11 +225,209 @@ const removevehicle=async(req,res)=>{
     }
 }
 
+const singleview = async(req,res)=>{
+    const id = req.body.id
+    const token = req.header('Authorization')?.split(' ')[1];
+    const claims= jwt.verify(token,'usersecret')
+    if (id) {
+
+        const data=await vehicle.findOne({_id:id})
+        const usdata= await User.findOne({_id:data.ownerId})
+
+        if (data) {
+        
+            res.send({data:data,userdata:usdata})
+            
+        }else{
+            res.status(400).send({
+                message:'sonthing went wrong...!'
+            })
+        }
+    }else{
+        res.status(400).send({
+            message:'sonthing went wrong...!'
+        })
+    }
+}
+
+const saved= async (req,res)=>{
+    try {
+        const id = req.body.id
+        const vehidata= await vehicle.findOne({_id:id})
+        const token = req.header('Authorization')?.split(' ')[1];
+        const claims= jwt.verify(token,'usersecret')
+        const userdata= await User.findOne({_id:claims._id})
+        
+   
+        for (let i = 0; i < userdata.saved.length; i++) {
+            if (userdata.saved[i].vehicleId===id) {
+             console.log('hali');
+             return res.status(400).send({
+                 message:'this vehicle alredy saved'
+             })
+            }
+        }
+         console.log('iliokjssf')
+
+        
+        if (vehidata) {
+           const  update= await User.findByIdAndUpdate({_id:claims._id},{$push:{saved:{vehicleId:vehidata._id,vehiclename:vehidata.name,image:vehidata.image,place:vehidata.place,date:vehidata.date,amount:vehidata.rentAmount}}})
+
+           if (update) {
+
+            res.send({
+                message:'saved success'
+            })
+            
+           }else{
+            res.status(400).send({
+                message:'somthing wrong..!'
+            })
+           }
+        }else{
+            res.status(400).send({
+                message:'somthing wrong..!'
+            })
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const getsaved=async(req,res)=>{
+    try {
+
+        const token = req.header('Authorization')?.split(' ')[1];
+        const claims= jwt.verify(token,'usersecret')
+
+        const saveddata= await User.findOne({_id:claims._id})
+
+        if (saveddata) {
+            res.send({
+                data:saveddata
+            })
+        }else{
+            res.status(400).send({
+                message:'somthin went wrong...!'
+            })
+        }
+       
+
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+const removesaved=async (req,res)=>{
+    try {
+
+        const token = req.header('Authorization')?.split(' ')[1];
+        const claims= jwt.verify(token,'usersecret')
+
+        const id= req.body.id
+        const result= await User.findByIdAndUpdate({_id:claims._id},{$pull:{saved:{_id:id}}})
+        if (result) {
+            res.send({
+                message:'removed success'
+            })
+        }else{
+            res.status(400).send({
+                message:'somthing went wrong..!'
+            })
+        }
+        
+    } catch (error) {
+        console.log(error.message);
+        
+    }
+}
+
+const makechange=async(req,res)=>{
+   try {
+
+    const id= req.body.id
+    const data= await vehicle.findOne({_id:id})
+    if (data.status=='active') {
+        const update= await vehicle.updateOne({_id:id},{$set:{status:'running'}})
+        if (update) {
+            res.send({
+                message:'success'
+            })
+        }else{
+            res.status(400).send({
+                message:"somthing wrong..!"
+            })
+        }
+
+    }else {
+        const update= await vehicle.updateOne({_id:id},{$set:{status:'active'}})
+        if (update) {
+            res.send({
+                message:'success'
+            })
+        }else{
+            res.status(400).send({
+                message:"somthing wrong..!"
+            })
+        }
+    }
+    
+   } catch (error) {
+    console.log(error.message);
+
+   }
+}
+
+const showfaster=async(req,res)=>{
+    try {
+
+        const token = req.header('Authorization')?.split(' ')[1];
+        const claims= jwt.verify(token,'usersecret')
+        const userdata= await User.findOne({_id:claims._id})
+        const paymentdata= req.body.data
+        const id= paymentdata.id
+        const newpayment= new subscription({
+            userId:claims._id,
+            userName:userdata.name,
+            vehicleId:id,
+            purpose:userdata.purpose,
+            paymentId:paymentdata.paymentId,
+            subscriptionType:paymentdata.type,
+            amount:paymentdata.amount,
+        })
+
+        const resulte= await newpayment.save()
+        console.log(resulte);
+        if (resulte) {
+
+            await vehicle.updateOne({_id:id},{$set:{showfaster:true}})
+            res.send({
+                message:`your ${paymentdata.type} payment success`
+            })
+        }else{
+            res.status(400).send({
+                message:'somthing went wrong...!'
+            })
+        }
+        
+    } catch (error) {
+    console.log(error.message);
+        
+    }
+}
+
 module.exports = {
     addVehicle,
     vehiclelist,
     vehicleactions,
     editvehicleget,
     editvehicle,
-    removevehicle
+    removevehicle,
+    singleview,
+    saved,
+    getsaved,
+    removesaved,
+    makechange,
+    showfaster
 }

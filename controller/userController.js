@@ -467,10 +467,11 @@ const viewprofile=async (req,res)=>{
         const id = req.body.id
         const userdata = await User.findOne({ _id:id})
         const vehicledata = await vehicle.find({ ownerId:id})
+        const sub = await subscription.findOne({userId: id })
 
         if (userdata) {
             res.send({
-                userdata, vehicledata
+                userdata, vehicledata,sub
             })
         } else {
             res.status(400).send({

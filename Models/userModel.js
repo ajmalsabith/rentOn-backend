@@ -54,6 +54,35 @@ const userSCheema= new mongoose.Schema({
         type:String,
         default:null
     },
+    saved:[
+        {
+            vehicleId:{
+                type:String,
+                required:true
+            }, 
+            vehiclename:{
+                type:String,
+                required:true
+            },
+            image:{
+                type:String,
+                required:true
+            },
+            amount:{
+                type:Number,
+                required:true
+            },
+            date:{
+                type:Date,
+                required:true
+
+            },
+            place:{
+                type:String,
+                required:true
+            }
+        }
+    ],
     place:{
         type:String,
         default:null

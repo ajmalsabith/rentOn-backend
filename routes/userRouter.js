@@ -34,6 +34,7 @@ userRoute.post('/setpassword',userController.setpassword)
 userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
 userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
 userRoute.post('/subscription',userController.subscriptiontaken)
+userRoute.post('/viewprofile',userController.viewprofile)
 
 
 
@@ -42,6 +43,11 @@ userRoute.post('/subscription',userController.subscriptiontaken)
 userRoute.post('/vehicleAdd',upload.fields([{name:'image'},{name:'proof'}]),vehicleController.addVehicle)
 userRoute.post('/editvehicle',vehicleController.editvehicleget)
 userRoute.post('/removevehi',vehicleController.removevehicle)
+userRoute.post('/singleview',vehicleController.singleview)
+userRoute.post('/saveimg',vehicleController.saved)
+userRoute.post('/removesaved',vehicleController.removesaved)
+userRoute.post('/makechange',vehicleController.makechange)
+userRoute.post('/showfaster',vehicleController.showfaster)
 userRoute.post('/editvehiclepost',upload.fields([{name:'image'},{name:'proof'}]),vehicleController.editvehicle)
 
 
@@ -53,7 +59,8 @@ userRoute.get('/editprofile',userController.editprofileload)
 userRoute.get('/home',userController.gethome)
 userRoute.get('/getsevices',userController.serviceget)
 userRoute.get('/getbusiness',userController.businessget)
-userRoute.post('/viewprofile',userController.viewprofile)
+userRoute.get('/savedDatas',vehicleController.getsaved)
+
 
 
 

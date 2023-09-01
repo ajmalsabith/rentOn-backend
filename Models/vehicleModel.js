@@ -57,6 +57,10 @@ const vehicleSchema = new mongoose.Schema({
         type: Date,
         default: new Date().toString(10)
     },
+    showfaster:{
+        type:Boolean,
+        default:false
+    }
     
 
 
