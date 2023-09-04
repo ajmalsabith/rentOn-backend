@@ -2,6 +2,7 @@ const express= require('express')
 
 const userController=require('../controller/userController')
 const vehicleController=require('../controller/vehicleController')
+const chatController=require('../controller/chatController')
 const { router } = require('json-server')
 const userRoute= express()
 
@@ -63,6 +64,13 @@ userRoute.get('/savedDatas',vehicleController.getsaved)
 
 
 
+// chat 
+
+userRoute.post('/getchat',chatController.newcreatechat)
+userRoute.post('/getmessage',chatController.getmessage)
+
+//get
+userRoute.get('/getchatdata',chatController.getchatdata)
 
 
 

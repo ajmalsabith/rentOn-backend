@@ -16,6 +16,9 @@ const securePassword = async (password) => {
     }
 }
 
+
+let passemail
+
 const userRegisterpost = async (req, res) => {
 
 
@@ -24,11 +27,20 @@ const userRegisterpost = async (req, res) => {
         if (req.body.user.email) {
 
             const email = req.body.user.email
-            console.log(email + 'email');
-            sendmail(email)
-            return res.send({
-                message: 'otp send to your email'
-            })
+            const data= await User.findOne({email:email})
+            if (data) {
+                passemail=email
+                console.log(email + 'email');
+                sendmail(email)
+                return res.send({
+                    message: 'otp send to your email'
+                })
+            }else{
+                res.status(400).send({
+                    message:'please correct your email'
+                })
+            }
+          
         } else {
             console.log('erere');
             const name = req.body.user.name
@@ -80,6 +92,7 @@ const userPurpose = async (req, res) => {
 
         console.log('loot');
         const purpose = req.body.data.purpose
+        
         console.log(purpose + 'purpose');
         const token = req.header('Authorization')?.split(' ')[1];
         if (!token) {
@@ -93,17 +106,33 @@ const userPurpose = async (req, res) => {
                 message: "unauthenticated"
             })
         }
-        const update = await User.updateOne({ _id: claims._id }, { $set: { purpose: purpose } })
-        console.log(update);
-        if (update) {
-            res.send({ message: 'success' })
-
-        } else {
-            return res.status(400).send({
-                message: "somthing wrong..!"
-            })
+        if (purpose=='customer') {
+          const update = await User.updateOne({ _id: claims._id }, { $set: { purpose: purpose } })
+          console.log(update);
+          if (update) {
+              res.send({ message: 'success' })
+  
+          } else {
+              return res.status(400).send({
+                  message: "somthing wrong..!"
+              })
+          }
+  
+            
+        }else{
+            const update = await User.updateOne({ _id: claims._id }, { $set: { purpose: purpose ,admin_verify:false} })
+            console.log(update);
+            if (update) {
+                res.send({ message: 'success' })
+    
+            } else {
+                return res.status(400).send({
+                    message: "somthing wrong..!"
+                })
+            }
+    
         }
-
+       
     } catch (error) {
         console.log(error.message);
     }
@@ -114,7 +143,6 @@ function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-let ogotp
 
 function sendmail(email) {
 
@@ -262,17 +290,13 @@ const loginuser = async (req, res) => {
 const setpassword = async (req, res) => {
     try {
 
-        const token = req.header('Authorization')?.split(' ')[1];
-        if (!token) {
-            return res.status(401).send({ message: 'Access denied. No token provided.' })
-        }
-
-        const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
+       
+        
 
         const password = req.body.data.password
+        console.log(password+'passw');
         const hashedPassword = await securePassword(password)
-        const updatapass = await User.updateOne({ _id: claims._id }, { $set: { password: hashedPassword } })
+        const updatapass = await User.updateOne({ email:passemail }, { $set: { password: hashedPassword } })
         if (updatapass) {
             res.send({
                 message: 'password changed'
@@ -360,17 +384,25 @@ const editprofile = async (req, res) => {
 
         const userdata = await User.findOne({ _id: claims._id })
         if (userdata) {
-            if (userdata.purpose=='service') {
-                const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone, image: req.file.filename ,aboutyou:aboutyou,qualification:qualification} })
-                if (updatedata) {
-                    res.send({
-                        message: 'profile updated success'
-                    })
-                } else {
+            if (userdata.purpose=='service' ) {
+                if (userdata.qualification=='') {
+                    const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone, image: req.file.filename ,aboutyou:aboutyou,qualification:qualification} })
+                    if (updatedata) {
+                        console.log('dududududu');
+                        res.send({
+                            message: 'profile updated success'
+                        })
+                    } else {
+                        res.status(400).send({
+                            message: 'somthing wrong...!'
+                        })
+                    }
+                }else{
                     res.status(400).send({
-                        message: 'somthing wrong...!'
+                        message: 'please enter your qulification'
                     })
                 }
+               
             }else{
                 const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,aboutyou:aboutyou, phone: phone, image: req.file.filename } })
                 if (updatedata) {
@@ -406,7 +438,7 @@ const gethome = async (req, res) => {
         const claims = jwt.verify(token, 'usersecret')
         console.log(claims._id+'userID accessed');
         if (claims) {
-            const vehicledata = await vehicle.find({is_block:false})
+            const vehicledata = await vehicle.find({is_block:false,status:'active'})
             if (vehicledata) {
 
                 console.log(vehicledata);
@@ -464,6 +496,9 @@ const businessget= async(req,res)=>{
 const viewprofile=async (req,res)=>{
     try {
 
+        const token = req.header('Authorization')?.split(' ')[1];
+        const claims = jwt.verify(token, 'usersecret')
+        const currentuser= await User.findOne({_id:claims._id})
         const id = req.body.id
         const userdata = await User.findOne({ _id:id})
         const vehicledata = await vehicle.find({ ownerId:id})
@@ -471,7 +506,7 @@ const viewprofile=async (req,res)=>{
 
         if (userdata) {
             res.send({
-                userdata, vehicledata,sub
+                userdata, vehicledata,sub,currentuser
             })
         } else {
             res.status(400).send({
@@ -547,6 +582,7 @@ module.exports = {
     businessget,
     viewprofile,
     subscriptiontaken
+    
     
 
 }

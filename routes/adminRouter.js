@@ -10,6 +10,7 @@ const admiRoute=express()
 
 admiRoute.post('/login',adminController.veryfilogin)
 admiRoute.post('/actions',adminController.useractions)
+admiRoute.post('/verification',adminController.verification)
 
 
 

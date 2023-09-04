@@ -168,15 +168,11 @@ const editvehicleget=async(req,res)=>{
 const editvehicle=async (req,res)=>{
     try {
         const imageFile = req.files['image'][0];
-        console.log(imageFile);
         const proofFile = req.files['proof'][0];
-        console.log(proofFile);
         
         const id=req.body.id
-        console.log(id+'vehicleid');
         const name = req.body.name
         const rentAmount = req.body.rentamount
-        console.log(rentAmount);
         const type = req.body.type
         const place = req.body.place
        
@@ -185,9 +181,8 @@ const editvehicle=async (req,res)=>{
         if (id) {
             const updatadata=await vehicle.updateOne({_id:id},{$set:{name:name,rentAmount:rentAmount,type:type,proof:proofFile.filename,image:imageFile.filename}})
             if (updatadata) {
-             console.log('success');
                 res.send({
-                    message:name+' vehicle updated'
+                    message:'vehicle updated'
                 })
                 
             }else{
@@ -207,7 +202,6 @@ const editvehicle=async (req,res)=>{
 const removevehicle=async(req,res)=>{
     try {
         const id=req.body.id
-        console.log(id);
         const vehicledata= await vehicle.findOneAndDelete({_id:id})
         if (vehicledata) {
             await User.updateOne({ _id:vehicledata.ownerId }, { $inc: { post: -1 } });
@@ -229,7 +223,30 @@ const singleview = async(req,res)=>{
     const id = req.body.id
     const token = req.header('Authorization')?.split(' ')[1];
     const claims= jwt.verify(token,'usersecret')
+    let count=0
+    
+    const viewcheck=await vehicle.findOne({_id:id})
     if (id) {
+
+        if (viewcheck.views.length==0) {
+             await vehicle.updateOne({_id:id},{$push:{views:claims._id}})
+
+        }else{
+            console.log(viewcheck.views.length);
+            for (let i = 0; i < viewcheck.views.length; i++) {
+
+                if (viewcheck.views[i]==claims._id) {
+                  count++
+                }
+            }
+
+            if (count==0) {
+                await vehicle.updateOne({_id:id},{$push:{views:claims._id}})      
+            }
+
+        }
+
+        
 
         const data=await vehicle.findOne({_id:id})
         const usdata= await User.findOne({_id:data.ownerId})
@@ -261,13 +278,11 @@ const saved= async (req,res)=>{
    
         for (let i = 0; i < userdata.saved.length; i++) {
             if (userdata.saved[i].vehicleId===id) {
-             console.log('hali');
              return res.status(400).send({
                  message:'this vehicle alredy saved'
              })
             }
         }
-         console.log('iliokjssf')
 
         
         if (vehidata) {

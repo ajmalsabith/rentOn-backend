@@ -42,8 +42,8 @@ const vehicleSchema = new mongoose.Schema({
         default: 'active'
     },
     views: {
-        type: Number,
-        default: 0
+        type: Array,
+        
     },
     like: {
         type: Number,

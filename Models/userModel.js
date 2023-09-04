@@ -86,6 +86,10 @@ const userSCheema= new mongoose.Schema({
     place:{
         type:String,
         default:null
+    },
+    admin_verify:{
+        type:Boolean
+        
     }
     
 

@@ -140,7 +140,7 @@ const useractions=async(req,res)=>{
                     success:'blocked'
                 })
             }else{
-                res.status.send({
+                res.status(400).send({
                     message:'somthing wrong...!'
                 })
             }
@@ -154,7 +154,7 @@ const useractions=async(req,res)=>{
                     success:'unblocked'
                 })
             }else{
-                res.status.send({
+                res.status(400).send({
                     message:'somthing wrong...!'
                 })
             }
@@ -167,6 +167,26 @@ const useractions=async(req,res)=>{
 }
 
 
+const verification= async (req,res)=>{
+    try {
+
+        const id= req.body.id
+        const success= await User.updateOne({_id:id},{$set:{admin_verify:true}})
+        if (success) {
+            res.send({
+                message:'admin verified'
+            })
+        }else{
+            res.status(400).send({
+                message:'somthing wrong...!'
+            })
+        }
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
 
 
 
@@ -175,5 +195,6 @@ module.exports = {
     customerget,
     businessget,
     serviceget,
-    useractions
+    useractions,
+    verification
 }
