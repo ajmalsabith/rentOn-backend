@@ -224,6 +224,7 @@ const singleview = async(req,res)=>{
     const token = req.header('Authorization')?.split(' ')[1];
     const claims= jwt.verify(token,'usersecret')
     let count=0
+    const currdata= await User.findOne({_id:claims._id})
     
     const viewcheck=await vehicle.findOne({_id:id})
     if (id) {
@@ -253,7 +254,7 @@ const singleview = async(req,res)=>{
 
         if (data) {
         
-            res.send({data:data,userdata:usdata})
+            res.send({data:data,userdata:usdata,currdata:currdata})
             
         }else{
             res.status(400).send({
@@ -394,41 +395,52 @@ const makechange=async(req,res)=>{
    }
 }
 
-const showfaster=async(req,res)=>{
+const sendlike= async (req,res)=>{
     try {
 
         const token = req.header('Authorization')?.split(' ')[1];
         const claims= jwt.verify(token,'usersecret')
-        const userdata= await User.findOne({_id:claims._id})
-        const paymentdata= req.body.data
-        const id= paymentdata.id
-        const newpayment= new subscription({
-            userId:claims._id,
-            userName:userdata.name,
-            vehicleId:id,
-            purpose:userdata.purpose,
-            paymentId:paymentdata.paymentId,
-            subscriptionType:paymentdata.type,
-            amount:paymentdata.amount,
-        })
+        const id = req.body.id
 
-        const resulte= await newpayment.save()
-        console.log(resulte);
-        if (resulte) {
+        const data= await vehicle.findOne({_id:id})
 
-            await vehicle.updateOne({_id:id},{$set:{showfaster:true}})
-            res.send({
-                message:`your ${paymentdata.type} payment success`
-            })
+        if (data) {
+            for (let i = 0; i < data.like.length; i++) {
+
+                if (data.like[i]==claims._id) {
+                    const update= await vehicle.updateOne({_id:id},{$pull:{like:claims._id}})
+                    if (update) {
+                        return res.send({
+                            message:'unliked'
+                        })
+                    }
+                    
+                    
+                }
+                
+            }
+            const update= await vehicle.updateOne({_id:id},{$push:{like:claims._id}})
+
+            if (update) {
+                res.send({
+                    message:'liked'
+                })
+            }else{
+                res.status(400).send({
+                    message:'somthing went wrong..!'
+                })
+            }
+
+
+
         }else{
             res.status(400).send({
-                message:'somthing went wrong...!'
+                message:'somthing went wrong..!'
             })
         }
         
     } catch (error) {
-    console.log(error.message);
-        
+        console.log(error.message);
     }
 }
 
@@ -444,5 +456,5 @@ module.exports = {
     getsaved,
     removesaved,
     makechange,
-    showfaster
+    sendlike
 }

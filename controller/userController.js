@@ -4,7 +4,11 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer')
 const vehicle = require('../Models/vehicleModel')
+const chatcon = require('../Models/chatConnectionModel')
 const subscription = require('../Models/subscriptionModel')
+const dotenv=require('dotenv')
+
+dotenv.config()
 
 const securePassword = async (password) => {
 
@@ -151,8 +155,8 @@ function sendmail(email) {
         port: 465,
         secure: true,
         auth: {
-            user: 'ajmalsabith444@gmail.com',
-            pass: 'roapvammbmkxzlck'
+            user:process.env.user,
+            pass:process.env.pass
         }
     });
     const otp = generateOTP()
@@ -311,121 +315,6 @@ const setpassword = async (req, res) => {
     }
 }
 
-const getprofile = async (req, res) => {
-    try {
-
-        const token = req.header('Authorization')?.split(' ')[1];
-        if (!token) {
-            return res.status(401).send({ message: 'Access denied. No token provided.' })
-        }
-
-        const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
-        const userdata = await User.findOne({ _id: claims._id })
-        const subdata = await subscription.findOne({userId: claims._id })
-        const vehicledata = await vehicle.find({ ownerId: claims._id })
-        console.log(vehicledata);
-
-        if (userdata) {
-            res.send({
-                userdata, vehicledata,subdata
-            })
-        } else {
-            res.status(400).send({
-                message: 'somthing wrong..!'
-            })
-        }
-
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-const editprofileload = async (req, res) => {
-    try {
-        const token = req.header('Authorization')?.split(' ')[1];
-        if (!token) {
-            return res.status(401).send({ message: 'Access denied. No token provided.' })
-        }
-
-        const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
-        const userdata = await User.findOne({ _id: claims._id, is_admin: false })
-        if (userdata) {
-            console.log(userdata);
-
-            res.send(userdata)
-        }
-
-    } catch (error) {
-        console.log(error.message);
-    }
-}
-
-const editprofile = async (req, res) => {
-    try {
-        const token = req.header('Authorization')?.split(' ')[1];
-        if (!token) {
-            return res.status(401).send({ message: 'Access denied. No token provided.' })
-        }
-
-        const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
-        const imageFile = req.file.filename
-        console.log(imageFile);
-
-        const name = req.body.name
-        const phone = req.body.phone
-        const place = req.body.place
-        const qualification = req.body.qualification
-        const aboutyou = req.body.aboutyou
-
-
-
-        const userdata = await User.findOne({ _id: claims._id })
-        if (userdata) {
-            if (userdata.purpose=='service' ) {
-                if (userdata.qualification=='') {
-                    const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone, image: req.file.filename ,aboutyou:aboutyou,qualification:qualification} })
-                    if (updatedata) {
-                        console.log('dududududu');
-                        res.send({
-                            message: 'profile updated success'
-                        })
-                    } else {
-                        res.status(400).send({
-                            message: 'somthing wrong...!'
-                        })
-                    }
-                }else{
-                    res.status(400).send({
-                        message: 'please enter your qulification'
-                    })
-                }
-               
-            }else{
-                const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,aboutyou:aboutyou, phone: phone, image: req.file.filename } })
-                if (updatedata) {
-                    res.send({
-                        message: 'profile updated success'
-                    })
-                } else {
-                    res.status(400).send({
-                        message: 'somthing wrong...!'
-                    })
-                }
-            }
-           
-        } else {
-            res.status(400).send({
-                message: 'somthing wrong...!'
-            })
-        }
-
-    } catch (error) {
-        console.log(error.message);
-    }
-}
 
 const gethome = async (req, res) => {
     try {
@@ -493,80 +382,6 @@ const businessget= async(req,res)=>{
     }
 }
 
-const viewprofile=async (req,res)=>{
-    try {
-
-        const token = req.header('Authorization')?.split(' ')[1];
-        const claims = jwt.verify(token, 'usersecret')
-        const currentuser= await User.findOne({_id:claims._id})
-        const id = req.body.id
-        const userdata = await User.findOne({ _id:id})
-        const vehicledata = await vehicle.find({ ownerId:id})
-        const sub = await subscription.findOne({userId: id })
-
-        if (userdata) {
-            res.send({
-                userdata, vehicledata,sub,currentuser
-            })
-        } else {
-            res.status(400).send({
-                message: 'somthing wrong..!'
-            })
-        }
-
-    } catch (error) {
-        console.log(error.message);
-        
-    }
-}
-
-const subscriptiontaken =async (req,res)=>{
-    try {
-        
-        const token = req.header('Authorization')?.split(' ')[1];
-        const paymentdata= req.body.data
-        console.log(paymentdata);
-
-        const type = paymentdata.type === 'monthly' ? 30 : 365;
-
-        const endDate = new Date(Date.now() + type * 24 * 60 * 60 * 1000)
-        
-        const claims= jwt.verify(token,'usersecret')
-        const userdata= await User.findOne({_id:claims._id})
-        if (userdata) {
-            const subdata= new subscription({
-                userId:claims._id,
-                userName:userdata.name,
-                purpose:userdata.purpose,
-                paymentId:paymentdata.paymentId,
-                subscriptionType:paymentdata.type,
-                amount:paymentdata.amount,
-                endDate:endDate
-            })
-
-            const resulte= await subdata.save()
-            console.log(resulte);
-            if (resulte) {
-                res.send({
-                    message:`your ${paymentdata.type} subscription success`
-                })
-            }else{
-                res.status(400).send({
-                    message:'somthing went wrong...!'
-                })
-            }
-        }else{
-            res.status(400).send({
-                message:'somthing went wrong...!'
-            })
-        }
-    } catch (error) {
-
-        console.log(error.message);
-    }
-}
-
-
 
 module.exports = {
     userRegisterpost,
@@ -574,15 +389,8 @@ module.exports = {
     postotp,
     loginuser,
     setpassword,
-    getprofile,
-    editprofileload,
-    editprofile,
     gethome,
     serviceget,
     businessget,
-    viewprofile,
-    subscriptiontaken
-    
-    
 
 }

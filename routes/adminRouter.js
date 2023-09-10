@@ -21,6 +21,9 @@ admiRoute.get('/customer',adminController.customerget)
 admiRoute.get('/business',adminController.businessget)
 admiRoute.get('/service',adminController.serviceget)
 
+admiRoute.get('/paymentdata',adminController.getpaymentdata)
+admiRoute.get('/dashboard',adminController.dashboardget)
+
 //vehicle
 admiRoute.get('/vehiclelist',vehicleController.vehiclelist)
 

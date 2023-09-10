@@ -3,6 +3,8 @@ const express= require('express')
 const userController=require('../controller/userController')
 const vehicleController=require('../controller/vehicleController')
 const chatController=require('../controller/chatController')
+const paymentController=require('../controller/paymentController')
+const profileController=require('../controller/profileController')
 const { router } = require('json-server')
 const userRoute= express()
 
@@ -32,10 +34,9 @@ userRoute.post('/purpose',userController.userPurpose)
 userRoute.post('/otp',userController.postotp)
 userRoute.post('/login',userController.loginuser)
 userRoute.post('/setpassword',userController.setpassword)
-userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
-userRoute.post('/editprofile',upload.single('image'),userController.editprofile)
-userRoute.post('/subscription',userController.subscriptiontaken)
-userRoute.post('/viewprofile',userController.viewprofile)
+userRoute.post('/editprofile',upload.single('image'),profileController.editprofile)
+userRoute.post('/subscription',paymentController.subscriptiontaken)
+userRoute.post('/viewprofile',profileController.viewprofile)
 
 
 
@@ -48,15 +49,16 @@ userRoute.post('/singleview',vehicleController.singleview)
 userRoute.post('/saveimg',vehicleController.saved)
 userRoute.post('/removesaved',vehicleController.removesaved)
 userRoute.post('/makechange',vehicleController.makechange)
-userRoute.post('/showfaster',vehicleController.showfaster)
+userRoute.post('/showfaster',paymentController.showfaster)
+userRoute.post('/sendlike',vehicleController.sendlike)
 userRoute.post('/editvehiclepost',upload.fields([{name:'image'},{name:'proof'}]),vehicleController.editvehicle)
 
 
 
 
 /// get
-userRoute.get('/profile',userController.getprofile)
-userRoute.get('/editprofile',userController.editprofileload)
+userRoute.get('/profile',profileController.getprofile)
+userRoute.get('/editprofile',profileController.editprofileload)
 userRoute.get('/home',userController.gethome)
 userRoute.get('/getsevices',userController.serviceget)
 userRoute.get('/getbusiness',userController.businessget)
@@ -68,6 +70,7 @@ userRoute.get('/savedDatas',vehicleController.getsaved)
 
 userRoute.post('/getchat',chatController.newcreatechat)
 userRoute.post('/getmessage',chatController.getmessage)
+userRoute.post('/sendmessage',chatController.sendmessage)
 
 //get
 userRoute.get('/getchatdata',chatController.getchatdata)

@@ -35,7 +35,6 @@ const newcreatechat= async(req,res)=>{
                     
         
                   const result =await newconnection.save()
-                  console.log(result);
                     if (result) {
                         res.send({
 
@@ -79,7 +78,6 @@ const getchatdata= async (req,res)=>{
 
         const curr= await User.findOne({_id:claims._id})
         
-        console.log(connctiondata);
 
         if (connctiondata) {
             res.send({
@@ -106,10 +104,26 @@ const sendmessage=async (req,res)=>{
         const data= req.body.data
         if (data) {
             const newmessage= new message({
-                connectionId:id,
+                connectionId:data.conId,
                 from:claims._id,
-                to:id,
+                to:data.toId._id,
                 message:data.message
+            })
+
+            const result= await newmessage.save()
+            if (result) {
+                await createchat.updateOne({_id:data.conId},{$set:{lastmessage:data.message}})
+                res.send({
+                   result:result 
+                })
+            }else{
+                res.status(400).send({
+                    message:'somthing wrong...!'
+                })
+            }
+        }else{
+            res.status(400).send({
+                message:'not data...!'
             })
         }
         
@@ -122,15 +136,18 @@ const sendmessage=async (req,res)=>{
 const getmessage= async (req,res)=>{
     try {
 
+        const token = req.header('Authorization')?.split(' ')[1];
+        const claims= jwt.verify(token,'usersecret')
+
         const idobj= req.body.data
-        console.log(idobj);
         const condata= await createchat.findOne({_id:idobj.conId}).populate('fromId').populate('toId')
+        const allmessage = await message.find({connectionId:idobj.conId}).sort('createdAt')
         if (condata) {
             res.send({
-                condata:condata
+                condata:condata,allmessage:allmessage
             })
 
-        }
+        }  
         
     } catch (error) {
         console.log(error.message);
@@ -141,5 +158,6 @@ const getmessage= async (req,res)=>{
 module.exports={
     newcreatechat,
     getchatdata,
-    getmessage
+    getmessage,
+    sendmessage
 }

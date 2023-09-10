@@ -1,6 +1,8 @@
 const User = require('../Models/userModel')
 const bcrypt = require('bcrypt')
 const vehicle = require('../Models/vehicleModel')
+const payment = require('../Models/subscriptionModel')
+const chatcon = require('../Models/chatConnectionModel')
 const jwt = require('jsonwebtoken');
 
 
@@ -189,6 +191,69 @@ const verification= async (req,res)=>{
 
 
 
+const getpaymentdata= async (req,res)=>{
+    try {
+
+        const data = await payment.find()
+        if (data) {
+
+            res.send({
+                data:data
+            })
+            
+        }else{
+            res.status(400).send({
+                message:'wrong ...!'
+            })
+        }
+        
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+
+const dashboardget= async (req,res)=>{
+    try {
+
+
+        const customer= await User.find({purpose:'customer',is_block:false}).count()
+        const customerblock= await User.find({purpose:'customer',is_block:true}).count()
+        const business= await User.find({purpose:'business',is_block:false}).count()
+        const businessblock= await User.find({purpose:'business',is_block:true}).count()
+        const service= await User.find({purpose:'service',is_block:false}).count()
+        const serviceblock= await User.find({purpose:'service',is_block:true}).count()
+        const vehicles =await vehicle.find({is_block:false}).count()
+        const vehiclesblock =await vehicle.find({is_block:true}).count()
+        const vehiclesrunning=await vehicle.find({status:'running',is_block:false}).count()
+        const vehiclesactive=await vehicle.find({status:'active',is_block:false}).count()
+        const subcribe = await payment.countDocuments({ subscriptionType: { $ne: 'showfast' } }).count()
+        const showfast = await payment.countDocuments({ subscriptionType:'showfast' }).count()
+        const chatconctions= await chatcon.find().count()
+        
+        if (customer) {
+
+            res.send({
+                customer,customerblock,business,businessblock,service,serviceblock,vehicles,
+                vehiclesblock,vehiclesrunning,vehiclesactive,subcribe,showfast,chatconctions
+            })
+            
+        }else{
+            res.status(400).send({
+                message:'wrong ...!'
+            })
+        }
+        
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+
 
 module.exports = {
     veryfilogin,
@@ -196,5 +261,7 @@ module.exports = {
     businessget,
     serviceget,
     useractions,
-    verification
+    verification,
+    getpaymentdata,
+    dashboardget
 }

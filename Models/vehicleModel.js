@@ -46,8 +46,7 @@ const vehicleSchema = new mongoose.Schema({
         
     },
     like: {
-        type: Number,
-        default: 0
+        type: Array
     },
     is_block:{
         type:Boolean,
