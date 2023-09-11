@@ -5,7 +5,6 @@ const vehicleController=require('../controller/vehicleController')
 const chatController=require('../controller/chatController')
 const paymentController=require('../controller/paymentController')
 const profileController=require('../controller/profileController')
-const { router } = require('json-server')
 const userRoute= express()
 
 const multer=require('multer')
