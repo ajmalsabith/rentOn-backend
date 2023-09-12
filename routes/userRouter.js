@@ -57,7 +57,7 @@ userRoute.post('/editvehiclepost',upload.fields([{name:'image'},{name:'proof'}])
 
 /// get
 userRoute.get('/profile',profileController.getprofile)
-userRoute.get('/editprofile',profileController.editprofileload)
+userRoute.get('/editprofileget',profileController.editprofileload)
 userRoute.get('/home',userController.gethome)
 userRoute.get('/getsevices',userController.serviceget)
 userRoute.get('/getbusiness',userController.businessget)
