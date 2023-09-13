@@ -14,10 +14,7 @@ dotenv.config()
 
 
 
-app.use(cors({
-    credentials:true,
-    origin:[process.env.origin]
-}));
+app.use(cors('*'));
 app.use(cookieParser());
 app.use(express.json());
 

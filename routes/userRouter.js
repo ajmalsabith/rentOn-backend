@@ -52,10 +52,9 @@ userRoute.post('/showfaster',paymentController.showfaster)
 userRoute.post('/sendlike',vehicleController.sendlike)
 userRoute.post('/editvehiclepost',upload.fields([{name:'image'},{name:'proof'}]),vehicleController.editvehicle)
 
-
-
-
 /// get
+
+
 userRoute.get('/profile',profileController.getprofile)
 userRoute.get('/editprofileget',profileController.editprofileload)
 userRoute.get('/home',userController.gethome)
