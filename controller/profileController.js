@@ -94,7 +94,6 @@ const editprofile = async (req, res) => {
         const userdata = await User.findOne({ _id: claims._id })
         if (userdata) {
             if (userdata.purpose=='service' ) {
-                if (userdata.qualification=='') {
                     const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone, image: req.file.filename ,aboutyou:aboutyou,qualification:qualification} })
                     if (updatedata) {
                         console.log('dududududu');
@@ -106,11 +105,8 @@ const editprofile = async (req, res) => {
                             message: 'somthing wrong...!'
                         })
                     }
-                }else{
-                    res.status(400).send({
-                        message: 'please enter your qulification'
-                    })
-                }
+                   
+                
                
             }else{
                 const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,aboutyou:aboutyou, phone: phone, image: req.file.filename } })
