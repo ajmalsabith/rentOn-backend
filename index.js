@@ -12,12 +12,7 @@ const http = require('http').createServer(app)
 const dotenv= require('dotenv')
 dotenv.config()
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://renton-vehicle.netlify.app');
-    // You can also set other CORS headers like 'Access-Control-Allow-Methods' and 'Access-Control-Allow-Headers' if needed.
-    // Make sure to configure them according to your requirements.
-    next();
-});
+
 
 app.use(cors({
     credentials:true,
