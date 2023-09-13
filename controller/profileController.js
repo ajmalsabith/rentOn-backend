@@ -78,15 +78,20 @@ const editprofile = async (req, res) => {
             return res.status(401).send({ message: 'Access denied. No token provided.' })
         }
 
+        console.log('hai editprofile   ....!');
+
+
         const claims = jwt.verify(token, 'usersecret')
         console.log(claims._id+'userID accessed');
         const imageFile = req.file.filename
         console.log(imageFile);
 
         const name = req.body.name
+        console.log(name);
         const phone = req.body.phone
         const place = req.body.place
         const qualification = req.body.qualification
+        console.log(qualification+'quilifacation');
         const aboutyou = req.body.aboutyou
 
 
