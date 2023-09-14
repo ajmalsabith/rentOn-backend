@@ -81,13 +81,13 @@ const editprofile = async (req, res) => {
 
         const claims = jwt.verify(token, 'usersecret')
 
-        const name = req.body.name
+        const name = req.body.data.name
         console.log(name);
-        const phone = req.body.phone
-        const place = req.body.place
-        const qualification = req.body.qualification
+        const phone = req.body.data.phone
+        const place = req.body.data.place
+        const qualification = req.body.data.qualification
         console.log(qualification+'quilifacation');
-        const aboutyou = req.body.aboutyou
+        const aboutyou = req.body.data.aboutyou
 
 
 
