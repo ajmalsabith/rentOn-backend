@@ -33,6 +33,7 @@ const getprofile = async (req, res) => {
         const userdata = await User.findOne({ _id: claims._id })
         const subdata = await subscription.findOne({userId: claims._id })
         const vehicledata = await vehicle.find({ ownerId: claims._id })
+        console.log(vehicledata);
 
         if (userdata) {
             res.send({
@@ -60,6 +61,7 @@ const editprofileload = async (req, res) => {
         console.log(claims._id+'userID accessed');
         const userdata = await User.findOne({ _id: claims._id, is_admin: false })
         if (userdata) {
+            console.log(userdata);
 
             res.send(userdata)
         }
@@ -80,20 +82,23 @@ const editprofile = async (req, res) => {
 
 
         const claims = jwt.verify(token, 'usersecret')
+        console.log(claims._id+'userID accessed');
+        const imageFile = req.file.filename
+        console.log(imageFile);
 
-        const name = req.body.data.name
+        const name = req.body.name
         console.log(name);
-        const phone = req.body.data.phone
-        const place = req.body.data.place
-        const qualification = req.body.data.qualification
+        const phone = req.body.phone
+        const place = req.body.place
+        const qualification = req.body.qualification
         console.log(qualification+'quilifacation');
-        const aboutyou = req.body.data.aboutyou
+        const aboutyou = req.body.aboutyou
 
 
 
         const userdata = await User.findOne({ _id: claims._id })
         if (userdata) {
-                    const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone,aboutyou:aboutyou,qualification:qualification} })
+                    const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone, image: req.file.filename ,aboutyou:aboutyou,qualification:qualification} })
                     if (updatedata) {
                         console.log('dududududu');
                         res.send({

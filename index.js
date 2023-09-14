@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser'); 
+
 const userroutes = require('./routes/userRouter');
 const adminRoutes = require('./routes/adminRouter');
 const cors = require('cors');
@@ -12,6 +14,8 @@ const http = require('http').createServer(app)
 const dotenv= require('dotenv')
 dotenv.config()
 
+app.use(bodyParser.urlencoded({limit: '50mb', extended: false}));
+app.use(bodyParser.json({limit: '50mb'}));
 
 
 app.use(cors({
