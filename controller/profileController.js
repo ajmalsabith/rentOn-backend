@@ -83,8 +83,6 @@ const editprofile = async (req, res) => {
 
         const claims = jwt.verify(token, 'usersecret')
         console.log(claims._id+'userID accessed');
-        const imageFile = req.file.filename
-        console.log(imageFile);
 
         const name = req.body.name
         console.log(name);
