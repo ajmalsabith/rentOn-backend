@@ -33,7 +33,7 @@ userRoute.post('/purpose',userController.userPurpose)
 userRoute.post('/otp',userController.postotp)
 userRoute.post('/login',userController.loginuser)
 userRoute.post('/setpassword',userController.setpassword)
-userRoute.put('/editprofile',profileController.editprofile)
+userRoute.post('/editprofile',profileController.editprofile)
 userRoute.post('/subscription',paymentController.subscriptiontaken)
 userRoute.post('/viewprofile',profileController.viewprofile)
 

@@ -33,7 +33,6 @@ const getprofile = async (req, res) => {
         const userdata = await User.findOne({ _id: claims._id })
         const subdata = await subscription.findOne({userId: claims._id })
         const vehicledata = await vehicle.find({ ownerId: claims._id })
-        console.log(vehicledata);
 
         if (userdata) {
             res.send({
@@ -61,7 +60,6 @@ const editprofileload = async (req, res) => {
         console.log(claims._id+'userID accessed');
         const userdata = await User.findOne({ _id: claims._id, is_admin: false })
         if (userdata) {
-            console.log(userdata);
 
             res.send(userdata)
         }
@@ -82,7 +80,6 @@ const editprofile = async (req, res) => {
 
 
         const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
 
         const name = req.body.name
         console.log(name);
