@@ -98,7 +98,7 @@ const editprofile = async (req, res) => {
 
         const userdata = await User.findOne({ _id: claims._id })
         if (userdata) {
-                    const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone, image: req.file.filename ,aboutyou:aboutyou,qualification:qualification} })
+                    const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone,aboutyou:aboutyou,qualification:qualification} })
                     if (updatedata) {
                         console.log('dududududu');
                         res.send({
