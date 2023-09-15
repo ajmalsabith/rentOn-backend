@@ -2,6 +2,7 @@
 const User = require('../Models/userModel')
 const vehicle = require('../Models/vehicleModel')
 const subscription = require('../Models/subscriptionModel')
+const jwt = require('jsonwebtoken');
 
 
 
