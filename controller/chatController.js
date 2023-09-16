@@ -3,63 +3,63 @@ const subscription = require('../Models/subscriptionModel')
 const User = require('../Models/userModel')
 const createchat = require('../Models/chatConnectionModel')
 const message = require('../Models/messageModel')
-const jwt= require('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 
-const newcreatechat= async(req,res)=>{
+const newcreatechat = async (req, res) => {
     try {
 
         const token = req.header('Authorization')?.split(' ')[1];
-        const claims= jwt.verify(token,'usersecret')
-        const id=req.body.id
-        const todata= await User.findOne({_id:id,})
-        const fromdata= await User.findOne({_id:claims._id})
+        const claims = jwt.verify(token, 'usersecret')
+        const id = req.body.id
+        const todata = await User.findOne({ _id: id, })
+        const fromdata = await User.findOne({ _id: claims._id })
 
-        const existdata= await createchat.findOne({fromId:claims._id,toId:id})
-        const existdataseconde= await createchat.findOne({fromId:id,toId:claims._id})
+        const existdata = await createchat.findOne({ fromId: claims._id, toId: id })
+        const existdataseconde = await createchat.findOne({ fromId: id, toId: claims._id })
 
 
 
-        if (id!==claims._id) {
-            if (existdata||existdataseconde) {
+        if (id !== claims._id) {
+            if (existdata || existdataseconde) {
                 res.send({
-                    message:'alredy done this'
+                    message: 'alredy done this'
                 })
-            }else{
+            } else {
                 if (id) {
-                    const newconnection= new createchat({
-                        fromId:claims._id,
-                        toId:id
-                        
+                    const newconnection = new createchat({
+                        fromId: claims._id,
+                        toId: id
+
                     })
-    
-                    
-        
-                  const result =await newconnection.save()
+
+
+
+                    const result = await newconnection.save()
                     if (result) {
                         res.send({
 
-                            message:'success'
+                            message: 'success'
 
                         })
-                    }else{
+                    } else {
                         res.status(400).send({
                             message: "somthing wrong..!"
                         })
                     }
-                }else{
+                } else {
                     res.status(400).send({
                         message: "somthing wrong..!"
                     })
                 }
             }
-           
-        }else{  
-                res.status(400).send({
-                    message: "this is your id"
-                })
-            
+
+        } else {
+            res.status(400).send({
+                message: "this is your id"
+            })
+
         }
-       
+
     } catch (error) {
         console.log(error.message);
     }
@@ -67,25 +67,25 @@ const newcreatechat= async(req,res)=>{
 
 
 
-const getchatdata= async (req,res)=>{
+const getchatdata = async (req, res) => {
     try {
         const token = req.header('Authorization')?.split(' ')[1];
-        const claims= jwt.verify(token,'usersecret')
+        const claims = jwt.verify(token, 'usersecret')
 
         const connctiondata = await createchat
-        .find({ $or: [{ fromId: claims._id }, { toId: claims._id }] })
-        .populate('fromId').populate('toId')
+            .find({ $or: [{ fromId: claims._id }, { toId: claims._id }] })
+            .populate('fromId').populate('toId')
 
-        const curr= await User.findOne({_id:claims._id})
-        
+        const curr = await User.findOne({ _id: claims._id })
+
 
         if (connctiondata) {
             res.send({
-                data:connctiondata,curr:curr
+                data: connctiondata, curr: curr
             })
-        }else{
+        } else {
             res.status(400).send({
-                message:"somthing went wrong..!"
+                message: "somthing went wrong..!"
             })
         }
 
@@ -94,68 +94,68 @@ const getchatdata= async (req,res)=>{
     }
 }
 
-const sendmessage=async (req,res)=>{
+const sendmessage = async (req, res) => {
     try {
 
         const token = req.header('Authorization')?.split(' ')[1];
-        const claims= jwt.verify(token,'usersecret')
+        const claims = jwt.verify(token, 'usersecret')
 
 
-        const data= req.body.data
+        const data = req.body.data
         if (data) {
-            const newmessage= new message({
-                connectionId:data.conId,
-                from:claims._id,
-                to:data.toId._id,
-                message:data.message
+            const newmessage = new message({
+                connectionId: data.conId,
+                from: claims._id,
+                to: data.toId._id,
+                message: data.message
             })
 
-            const result= await newmessage.save()
+            const result = await newmessage.save()
             if (result) {
-                await createchat.updateOne({_id:data.conId},{$set:{lastmessage:data.message}})
+                await createchat.updateOne({ _id: data.conId }, { $set: { lastmessage: data.message } })
                 res.send({
-                   result:result 
+                    result: result
                 })
-            }else{
+            } else {
                 res.status(400).send({
-                    message:'somthing wrong...!'
+                    message: 'somthing wrong...!'
                 })
             }
-        }else{
+        } else {
             res.status(400).send({
-                message:'not data...!'
+                message: 'not data...!'
             })
         }
-        
+
     } catch (error) {
         console.log(error.message);
-        
+
     }
 }
 
-const getmessage= async (req,res)=>{
+const getmessage = async (req, res) => {
     try {
 
         const token = req.header('Authorization')?.split(' ')[1];
-        const claims= jwt.verify(token,'usersecret')
+        const claims = jwt.verify(token, 'usersecret')
 
-        const idobj= req.body.data
-        const condata= await createchat.findOne({_id:idobj.conId}).populate('fromId').populate('toId')
-        const allmessage = await message.find({connectionId:idobj.conId}).sort('createdAt')
+        const idobj = req.body.data
+        const condata = await createchat.findOne({ _id: idobj.conId }).populate('fromId').populate('toId')
+        const allmessage = await message.find({ connectionId: idobj.conId }).sort('createdAt')
         if (condata) {
             res.send({
-                condata:condata,allmessage:allmessage
+                condata: condata, allmessage: allmessage
             })
 
-        }  
-        
+        }
+
     } catch (error) {
         console.log(error.message);
-        
-    }
-} 
 
-module.exports={
+    }
+}
+
+module.exports = {
     newcreatechat,
     getchatdata,
     getmessage,

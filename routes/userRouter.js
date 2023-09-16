@@ -24,9 +24,6 @@ const storage=multer.diskStorage({
 const upload=multer({storage:storage})
 
 
-
-/// post
-
 // user
 userRoute.post('/register',userController.userRegisterpost)
 userRoute.post('/purpose',userController.userPurpose)
