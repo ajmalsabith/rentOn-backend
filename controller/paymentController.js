@@ -27,7 +27,6 @@ const showfaster=async(req,res)=>{
         })
 
         const resulte= await newpayment.save()
-        console.log(resulte);
         if (resulte) {
 
             await vehicle.updateOne({_id:id},{$set:{showfaster:true}})
@@ -54,7 +53,6 @@ const subscriptiontaken =async (req,res)=>{
         
         const token = req.header('Authorization')?.split(' ')[1];
         const paymentdata= req.body.data
-        console.log(paymentdata);
 
         const type = paymentdata.type === 'monthly' ? 30 : 365;
 
@@ -74,7 +72,6 @@ const subscriptiontaken =async (req,res)=>{
             })
 
             const resulte= await subdata.save()
-            console.log(resulte);
             if (resulte) {
                 res.send({
                     message:`your ${paymentdata.type} subscription success`

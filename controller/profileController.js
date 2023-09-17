@@ -27,13 +27,11 @@ const getprofile = async (req, res) => {
         
 
         const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
         const connection= await chatcon.find({ $or: [{ fromId: claims._id }, { toId: claims._id }] }).count()
 
         const userdata = await User.findOne({ _id: claims._id })
         const subdata = await subscription.findOne({userId: claims._id })
         const vehicledata = await vehicle.find({ ownerId: claims._id })
-        console.log(vehicledata);
 
         if (userdata) {
             res.send({
@@ -58,10 +56,8 @@ const editprofileload = async (req, res) => {
         }
 
         const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
         const userdata = await User.findOne({ _id: claims._id, is_admin: false })
         if (userdata) {
-            console.log(userdata);
 
             res.send(userdata)
         }
@@ -78,20 +74,15 @@ const editprofile = async (req, res) => {
             return res.status(401).send({ message: 'Access denied. No token provided.' })
         }
 
-        console.log('hai editprofile   ....!');
 
 
         const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
         const imageFile = req.file.filename
-        console.log(imageFile);
 
         const name = req.body.name
-        console.log(name);
         const phone = req.body.phone
         const place = req.body.place
         const qualification = req.body.qualification
-        console.log(qualification+'quilifacation');
         const aboutyou = req.body.aboutyou
 
 
@@ -100,7 +91,6 @@ const editprofile = async (req, res) => {
         if (userdata) {
                     const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone, image: req.file.filename ,aboutyou:aboutyou,qualification:qualification} })
                     if (updatedata) {
-                        console.log('dududududu');
                         res.send({
                             message: 'profile updated success'
                         })

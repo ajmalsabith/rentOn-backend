@@ -34,7 +34,6 @@ const userRegisterpost = async (req, res) => {
             const data= await User.findOne({email:email})
             if (data) {
                 passemail=email
-                console.log(email + 'email');
                 sendmail(email)
                 return res.send({
                     message: 'otp send to your email'
@@ -46,7 +45,6 @@ const userRegisterpost = async (req, res) => {
             }
           
         } else {
-            console.log('erere');
             const name = req.body.user.name
             const email = req.body.user.emailuser
             const phone = req.body.user.phone
@@ -55,15 +53,12 @@ const userRegisterpost = async (req, res) => {
             const hashedPassword = await securePassword(password)
 
             const userdata = await User.findOne({ email: email })
-            console.log('data  '+userdata);
             if (userdata) {
-                console.log(userdata);
 
                 return res.status(400).send({
                     message: "Email is already exist"
                 })
             } else {
-                console.log('ajmal');
                 const user = new User({
                     name: name,
                     email: email,
@@ -75,7 +70,6 @@ const userRegisterpost = async (req, res) => {
 
                 const token = jwt.sign({ _id:userdata._id}, "usersecret")
                 const message='register success'
-                console.log(token);
                 sendmail(email)
 
                 return res.send({token:token,message:message})
@@ -94,17 +88,14 @@ const userPurpose = async (req, res) => {
 
     try {
 
-        console.log('loot');
         const purpose = req.body.data.purpose
         
-        console.log(purpose + 'purpose');
         const token = req.header('Authorization')?.split(' ')[1];
         if (!token) {
             return res.status(401).send({ message: 'Access denied. No token provided.' })
         }
 
         const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
         if (!claims) {
             return res.status(401).send({
                 message: "unauthenticated"
@@ -112,7 +103,6 @@ const userPurpose = async (req, res) => {
         }
         if (purpose=='customer') {
           const update = await User.updateOne({ _id: claims._id }, { $set: { purpose: purpose } })
-          console.log(update);
           if (update) {
               res.send({ message: 'success' })
   
@@ -125,7 +115,6 @@ const userPurpose = async (req, res) => {
             
         }else{
             const update = await User.updateOne({ _id: claims._id }, { $set: { purpose: purpose ,admin_verify:false} })
-            console.log(update);
             if (update) {
                 res.send({ message: 'success' })
     
@@ -161,7 +150,6 @@ function sendmail(email) {
     });
     const otp = generateOTP()
     ogotp = otp
-    console.log(otp);
     const mailOptions = {
         from: process.env.user,
         to: email,
@@ -207,7 +195,6 @@ const postotp = async (req, res) => {
             }
     
             const claims = jwt.verify(token,'usersecret')
-            console.log(claims._id+'userID accessed');
 
             if (userotp == ogotp) {
               const update=  await User.updateOne({ _id: claims._id }, { $set: { is_verified: true } })
@@ -238,13 +225,10 @@ const postotp = async (req, res) => {
 const loginuser = async (req, res) => {
     try {
         const data = req.body.data.email
-        console.log(data + 'email');
         const password = req.body.data.password
-        console.log(password + 'password');
         const userdata = await User.findOne({ email: data })
 
         if (userdata) {
-            console.log(userdata + 'data');
             if (userdata.is_verified) {
 
                 if (!userdata.is_block) {
@@ -255,7 +239,6 @@ const loginuser = async (req, res) => {
 
                         const token = jwt.sign({ _id:userdata._id},"usersecret")
 
-                        console.log(token)
                         const message='login success'
                        return res.send({token:token,message:message})
                
@@ -298,7 +281,6 @@ const setpassword = async (req, res) => {
         
 
         const password = req.body.data.password
-        console.log(password+'passw');
         const hashedPassword = await securePassword(password)
         const updatapass = await User.updateOne({ email:passemail }, { $set: { password: hashedPassword } })
         if (updatapass) {
@@ -325,12 +307,10 @@ const gethome = async (req, res) => {
         }
 
         const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
         if (claims) {
             const vehicledata = await vehicle.find({is_block:false,status:'active'})
             if (vehicledata) {
 
-                console.log(vehicledata);
                 res.send(vehicledata)
             } else {
                 res.status(400).send({

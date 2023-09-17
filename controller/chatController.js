@@ -137,7 +137,6 @@ const getmessage = async (req, res) => {
     try {
 
         const token = req.header('Authorization')?.split(' ')[1];
-        const claims = jwt.verify(token, 'usersecret')
 
         const idobj = req.body.data
         const condata = await createchat.findOne({ _id: idobj.conId }).populate('fromId').populate('toId')

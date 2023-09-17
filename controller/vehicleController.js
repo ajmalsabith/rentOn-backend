@@ -28,11 +28,9 @@ const addVehicle = async (req, res) => {
         }
 
         const claims = jwt.verify(token, 'usersecret')
-        console.log(claims._id+'userID accessed');
-        console.log(claims._id);
+       
 
         const userdata = await User.findOne({ _id: claims._id })
-        console.log(userdata);
 
         if (userdata) {
 
@@ -86,7 +84,6 @@ const vehiclelist = async (req, res) => {
 
         const vehicledata = await vehicle.find({})
         if (vehicledata) {
-            console.log(vehicledata);
             res.send({
                 datas: vehicledata
             })
@@ -106,7 +103,6 @@ const vehicleactions= async (req,res)=>{
 
     try {
         const id = req.body.id
-        console.log(id);
 
         const userdata= await vehicle.findOne({_id:id})
         if (!userdata.is_block) {
@@ -121,10 +117,8 @@ const vehicleactions= async (req,res)=>{
                 })
             }
         }else{
-            console.log('userduud');
             const updatedata= await vehicle.findByIdAndUpdate({_id:id},{$set:{is_block:false}})
             if (updatedata) {
-                console.log(updatedata);
 
                 res.send({
                     success:' unblocked'
@@ -147,7 +141,6 @@ const vehicleactions= async (req,res)=>{
 const editvehicleget=async(req,res)=>{
     try {
         const id=req.body.id
-        console.log(id);
         const vehicledata= await vehicle.findOne({_id:id})
         if (vehicledata) {
             res.send({
@@ -233,7 +226,6 @@ const singleview = async(req,res)=>{
              await vehicle.updateOne({_id:id},{$push:{views:claims._id}})
 
         }else{
-            console.log(viewcheck.views.length);
             for (let i = 0; i < viewcheck.views.length; i++) {
 
                 if (viewcheck.views[i]==claims._id) {

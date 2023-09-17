@@ -12,7 +12,6 @@ const veryfilogin = async (req, res) => {
         const password = req.body.data.password
 
         const admindata = await User.findOne({ email: data })
-        console.log(admindata);
         if (admindata) {
 
             if (admindata.is_admin == true) {
@@ -20,7 +19,6 @@ const veryfilogin = async (req, res) => {
                 if (passwordmatch) {
 
                     const token = jwt.sign({ _id: admindata._id }, "adminsecret")
-                    console.log(token);
                     res.send({
                         token: token
                     })
@@ -111,7 +109,6 @@ const serviceget = async (req, res) => {
 
         const servicedata = await User.find({ is_admin: false, purpose:'service'})
         if (servicedata) {
-            console.log(servicedata);
             res.send({
                 datas: servicedata
             })
@@ -132,7 +129,6 @@ const serviceget = async (req, res) => {
 const useractions=async(req,res)=>{
     try {
         const id = req.body.id
-        console.log(id);
 
         const userdata= await User.findOne({_id:id})
         if (!userdata.is_block) {
@@ -147,10 +143,8 @@ const useractions=async(req,res)=>{
                 })
             }
         }else{
-            console.log('userduud');
             const updatedata= await User.findByIdAndUpdate({_id:id},{$set:{is_block:false}})
             if (updatedata) {
-                console.log(updatedata);
 
                 res.send({
                     success:'unblocked'
