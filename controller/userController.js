@@ -285,7 +285,7 @@ const setpassword = async (req, res) => {
         const updatapass = await User.updateOne({ email:passemail }, { $set: { password: hashedPassword } })
         if (updatapass) {
             res.send({
-                message: 'password changed'
+                message: 'your password has been changed'
             })
         } else {
             res.status(400).send({
@@ -314,13 +314,13 @@ const gethome = async (req, res) => {
                 res.send(vehicledata)
             } else {
                 res.status(400).send({
-                    message: 'somthing wrong...!'
+                    message: 'somthing went wrong...!'
                 })
             }
 
         } else {
             res.status(400).send({
-                message: 'somthing wrong...!'
+                message: 'somthing went wrong...!'
             })
         }
 

@@ -39,7 +39,7 @@ const getprofile = async (req, res) => {
             })
         } else {
             res.status(400).send({
-                message: 'somthing wrong..!'
+                message: 'somthing went wrong..!'
             })
         }
 
@@ -92,7 +92,7 @@ const editprofile = async (req, res) => {
                     const updatedata = await User.findOneAndUpdate({ _id: claims._id }, { $set: { name: name,place:place,phone: phone, image: req.file.filename ,aboutyou:aboutyou,qualification:qualification} })
                     if (updatedata) {
                         res.send({
-                            message: 'profile updated success'
+                            message: 'profile updation success'
                         })
                     } else {
                         res.status(400).send({
@@ -135,7 +135,7 @@ const viewprofile=async (req,res)=>{
             })
         } else {
             res.status(400).send({
-                message: 'somthing wrong..!'
+                message: 'somthing wrong...!'
             })
         }
 

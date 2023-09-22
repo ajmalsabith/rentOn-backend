@@ -22,7 +22,7 @@ const newcreatechat = async (req, res) => {
         if (id !== claims._id) {
             if (existdata || existdataseconde) {
                 res.send({
-                    message: 'alredy done this'
+                    message: 'alredy done'
                 })
             } else {
                 if (id) {
@@ -43,7 +43,7 @@ const newcreatechat = async (req, res) => {
                         })
                     } else {
                         res.status(400).send({
-                            message: "somthing went wrong..!"
+                            message: "somthing went wrong...!"
                         })
                     }
                 } else {
