@@ -43,7 +43,7 @@ const newcreatechat = async (req, res) => {
                         })
                     } else {
                         res.status(400).send({
-                            message: "somthing wrong..!"
+                            message: "somthing went wrong..!"
                         })
                     }
                 } else {
@@ -85,7 +85,7 @@ const getchatdata = async (req, res) => {
             })
         } else {
             res.status(400).send({
-                message: "somthing went wrong..!"
+                message: "somthing went  wrong...!"
             })
         }
 
